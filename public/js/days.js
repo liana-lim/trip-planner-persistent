@@ -128,21 +128,26 @@ var daysModule = (function(){
           if (days.length === 0) {
               $(addDay);
           } 
+    
+
+
+          days.forEach(function (day) {
+            if (day.hotel){
+              day.hotel.type = 'hotel';
+              day.hotel = attractionsModule.create(day.hotel);
+            };
+            day.restaurants.forEach(function (restaurant, i) {
+              restaurant.type = 'restaurant';
+              day.restaurants[i] = attractionsModule.create(restaurant);
+            });
+            day.activities.forEach(function (activity, i) {
+              activity.type = 'activity';
+              day.activities[i] = attractionsModule.create(activity);
+            });
+            
+          })
+
           currentDay = days[0];
-
-          if (currentDay.hotel){
-            currentDay.hotel.type = 'hotel';
-            currentDay.hotel = attractionsModule.create(currentDay.hotel);
-          };
-          currentDay.restaurants.forEach(function (restaurant, i) {
-            restaurant.type = 'restaurant';
-            currentDay.restaurants[i] = attractionsModule.create(restaurant);
-          });
-          currentDay.activities.forEach(function (activity, i) {
-            activity.type = 'activity';
-            currentDay.activities[i] = attractionsModule.create(activity);
-          });
-
 
           currentDay.switchTo();
         },
@@ -151,7 +156,7 @@ var daysModule = (function(){
           console.error(errorObj);
         }
       });
-      
+
       
 
     },
