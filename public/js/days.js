@@ -20,12 +20,13 @@ var daysModule = (function(){
 
   // Day class
 
-  function Day (hotel, restaurants, activities) {
+  function Day (hotel, restaurants, activities, id) {
     this.hotel = hotel || null;
     this.restaurants = restaurants || [];
     this.activities = activities || [];
     this.number = days.push(this);
     this.buildButton().drawButton();
+    this.id = id || null;
   }
 
   Day.prototype.buildButton = function() {
@@ -47,6 +48,8 @@ var daysModule = (function(){
 
   Day.prototype.switchTo = function() {
     // day button panel changes
+
+    console.log(currentDay);
 
     currentDay.$button.removeClass('current-day');
 
@@ -108,12 +111,19 @@ var daysModule = (function(){
     //take data from backend and put into days object into the frontend
     responseData.forEach(function (day) {
     
-      var newDay = new Day(day.hotel, day.restaurants, day.activities);
+      var newDay = new Day(day.hotel, day.restaurants, day.activities, day._id);
 
     });
 
   }
 
+
+  // function createAttractionData (attractionData) {
+  //   console.log(attractionData, "in create");
+  //   attractionData.forEach(function (attraction) {
+
+  //   })
+  // }
   // globally accessible methods of the daysModule
 
   var methods = {
@@ -162,6 +172,17 @@ var daysModule = (function(){
     },
 
     addAttraction: function(attractionData){
+      $.ajax({
+        url: '/api/days/' + currentDay.id,
+        type: 'POST',
+        data: { type: attractionData.type, 
+                id: attractionData._id
+              }
+      })
+      .done(function (message) {
+          console.log("this is in the post attaction data");
+      });
+
       var attraction = attractionsModule.create(attractionData);
       switch (attraction.type) {
         case 'hotel': currentDay.hotel = attraction; break;
@@ -169,6 +190,7 @@ var daysModule = (function(){
         case 'activity': currentDay.activities.push(attraction); break;
         default: console.error('bad type:', attraction);
       }
+
     },
 
     getCurrentDay: function(){

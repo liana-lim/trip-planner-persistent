@@ -25,6 +25,27 @@ router.post('/days', function(req, res, next) { //
 	.then(null, next);
 })
 
+//save a created day to DB
+router.post('/days/:id', function(req, res, next) { //
+	console.log(req.body, 'this is req.body');
+	Day.findById(req.params.id).populate('hotel restaurants activities').exec()
+	.then(function (day){
+		if (req.body.type === 'hotel') {
+			day.hotel = req.body.id;
+		}
+		if (req.body.type === 'restaurant') {
+			day.restaurants.push(req.body.id);
+		}
+		if (req.body.type === 'activity') {
+			day.activities.push(req.body.id);
+		}
+		console.log(day, "after adding stuff");
+		day.save();
+	})
+	.then(null, next);
+})
+
+
 //add attraction to specific day
 router.post('/days/:id/:attraction', function(req, res, next) { //
 	res.send('This is a post attraction route');
